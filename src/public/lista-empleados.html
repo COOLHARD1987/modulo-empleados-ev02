@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Empleados</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('modulo de inventarios.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .overlay {
+      background-color: rgba(255, 255, 255, 0.88);
+      margin: 30px auto;
+      padding: 30px 40px;
+      max-width: 1200px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin: 0;
+    }
+
+    h1 {
+      color: #6c2c00;
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    h2 {
+      color: #b37500;
+      margin-bottom: 30px;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 20px;
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 1500px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      color: #5a3e1b;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f0f0f0;
+    }
+
+    .button {
+      background: #B8D685;
+      color: #254D1B;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      float: left;
+      margin-top: 10px;
+    }
+
+    .button:hover {
+      background: #a6c473;
+      color: #1a3a14;
+    }
+
+    .edit-btn {
+      background: #4A90E2;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin: 2px;
+    }
+
+    .edit-btn:hover {
+      background: #357ABD;
+    }
+
+    .delete-btn {
+      background: #e74c3c;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin: 2px;
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+
+    /* Modal de edición */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #5a3e1b;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .form-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .section-title {
+      grid-column: 1 / -1;
+      color: #6c2c00;
+      margin: 20px 0 10px 0;
+      padding-bottom: 5px;
+      border-bottom: 2px solid #B8D685;
+    }
+
+    .modal-buttons {
+      grid-column: 1 / -1;
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .save-btn {
+      background: #B8D685;
+      color: #254D1B;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .save-btn:hover {
+      background: #a6c473;
+    }
+
+    .cancel-btn {
+      background: #f2f2f2;
+      color: #666;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .cancel-btn:hover {
+      background: #e0e0e0;
+    }
+
+    /* Scrollbar personalizado */
+    .table-container::-webkit-scrollbar {
+      height: 12px;
+    }
+
+    .table-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 6px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb {
+      background: #B8D685;
+      border-radius: 6px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb:hover {
+      background: #a6c473;
+    }
+
+    .debug-panel {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+      font-size: 12px;
+    }
+
+    .debug-panel h3 {
+      margin: 0 0 10px 0;
+      color: #495057;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #6c2c00;
+      font-weight: bold;
+    }
+
+    .status-message {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      text-align: center;
+      display: none;
+    }
+
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay">
+    <h1>Pollos y Huevos de Cundinamarca</h1>
+    <h2>Lista de Empleados</h2>
+
+    <!-- Mensajes de estado -->
+    <div id="statusMessage" class="status-message"></div>
+
+    <!-- Panel de diagnóstico -->
+    <div class="debug-panel" id="debugPanel">
+      <h3>🔍 Diagnóstico del Sistema</h3>
+      <div id="debugInfo">Cargando información...</div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo Doc.</th>
+            <th>Número Doc.</th>
+            <th>Fecha Nac.</th>
+            <th>Nacionalidad</th>
+            <th>Estado Civil</th>
+            <th>Dirección</th>
+            <th>Ciudad</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Cargo</th>
+            <th>Departamento</th>
+            <th>Tipo Contrato</th>
+            <th>Fecha Ingreso</th>
+            <th>Jornada</th>
+            <th>Salario</th>
+            <th>Jefe Inmediato</th>
+            <th>EPS</th>
+            <th>AFP</th>
+            <th>ARL</th>
+            <th>Caja Compensación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="empleadosTableBody">
+          <tr>
+            <td colspan="22" class="loading">🔄 Cargando empleados...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <a href="empleados.html" class="button">Regresar al Menú</a>
+    <button class="button" style="float: right; margin-left: 10px;" onclick="recargarDatos()">🔄 Actualizar Lista</button>
+  </div>
+
+  <!-- Modal de edición -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 style="color: #6c2c00; text-align: center;">Editar Empleado</h2>
+      
+      <form id="editForm">
+        <div class="form-columns">
+          <div class="section-title">Datos Personales</div>
+          
+          <div class="form-group">
+            <label for="editNombre">Nombre completo:</label>
+            <input type="text" id="editNombre" name="nombre" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editTipoDocumento">Tipo de documento:</label>
+            <select id="editTipoDocumento" name="tipoDocumento" required>
+              <option value="Cédula">Cédula</option>
+              <option value="Pasaporte">Pasaporte</option>
+              <option value="Cédula Extranjería">Cédula Extranjería</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editDocumento">Número de documento:</label>
+            <input type="text" id="editDocumento" name="documento" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editFechaNacimiento">Fecha de nacimiento:</label>
+            <input type="date" id="editFechaNacimiento" name="fechaNacimiento" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editNacionalidad">Nacionalidad:</label>
+            <input type="text" id="editNacionalidad" name="nacionalidad" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editEstadoCivil">Estado civil:</label>
+            <select id="editEstadoCivil" name="estadoCivil" required>
+              <option value="Soltero">Soltero</option>
+              <option value="Casado">Casado</option>
+              <option value="Divorciado">Divorciado</option>
+              <option value="Viudo">Viudo</option>
+              <option value="Unión Libre">Unión Libre</option>
+            </select>
+          </div>
+
+          <div class="section-title">Contacto</div>
+
+          <div class="form-group">
+            <label for="editDireccion">Dirección:</label>
+            <input type="text" id="editDireccion" name="direccion" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editCiudad">Ciudad:</label>
+            <input type="text" id="editCiudad" name="ciudad" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editTelefono">Teléfono:</label>
+            <input type="tel" id="editTelefono" name="telefono" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editCorreo">Correo electrónico:</label>
+            <input type="email" id="editCorreo" name="correo" required>
+          </div>
+
+          <div class="section-title">Información Laboral</div>
+
+          <div class="form-group">
+            <label for="editCargo">Cargo:</label>
+            <input type="text" id="editCargo" name="cargo" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editDepartamento">Departamento:</label>
+            <input type="text" id="editDepartamento" name="departamento" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editTipoContrato">Tipo de contrato:</label>
+            <select id="editTipoContrato" name="tipoContrato" required>
+              <option value="Término fijo">Término fijo</option>
+              <option value="Término indefinido">Término indefinido</option>
+              <option value="Prestación de servicios">Prestación de servicios</option>
+              <option value="Obra o labor">Obra o labor</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editFechaIngreso">Fecha de ingreso:</label>
+            <input type="date" id="editFechaIngreso" name="fechaIngreso" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editJornada">Jornada laboral:</label>
+            <select id="editJornada" name="jornada" required>
+              <option value="Completa">Completa</option>
+              <option value="Parcial">Parcial</option>
+              <option value="Medio tiempo">Medio tiempo</option>
+              <option value="Turnos">Turnos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="editSalario">Salario:</label>
+            <input type="number" id="editSalario" name="salario" step="0.01" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editJefeInmediato">Jefe inmediato:</label>
+            <input type="text" id="editJefeInmediato" name="jefeInmediato" required>
+          </div>
+
+          <div class="section-title">Seguridad Social</div>
+
+          <div class="form-group">
+            <label for="editEps">EPS:</label>
+            <input type="text" id="editEps" name="eps" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editAfp">Fondo de pensiones (AFP):</label>
+            <input type="text" id="editAfp" name="afp" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editArl">ARL:</label>
+            <input type="text" id="editArl" name="arl" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editCajaCompensacion">Caja de compensación:</label>
+            <input type="text" id="editCajaCompensacion" name="cajaCompensacion" required>
+          </div>
+
+          <div class="modal-buttons">
+            <button type="button" class="cancel-btn">Cancelar</button>
+            <button type="submit" class="save-btn">Guardar Cambios</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let empleados = [];
+    let empleadoEditando = null;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      console.log("🚀 INICIANDO LISTA DE EMPLEADOS...");
+      cargarEmpleados();
+      configurarModal();
+    });
+
+    function mostrarMensaje(mensaje, tipo) {
+      const statusMessage = document.getElementById("statusMessage");
+      statusMessage.textContent = mensaje;
+      statusMessage.className = 'status-message status-' + tipo;
+      statusMessage.style.display = 'block';
+      
+      setTimeout(() => {
+        statusMessage.style.display = 'none';
+      }, 5000);
+    }
+
+    async function cargarEmpleados() {
+      const tabla = document.getElementById("empleadosTableBody");
+      const debugInfo = document.getElementById("debugInfo");
+      
+      try {
+        console.log("📋 Solicitando empleados al servidor...");
+        
+        const response = await fetch('/api/empleados');
+        const result = await response.json();
+        
+        console.log("=== DIAGNÓSTICO LISTA EMPLEADOS ===");
+        console.log("Respuesta del servidor:", result);
+        
+        if (result.success) {
+          empleados = result.data;
+          console.log("Empleados obtenidos:", empleados);
+          console.log("Cantidad:", empleados.length);
+          
+          // Actualizar panel de diagnóstico
+          debugInfo.innerHTML = `
+            <strong>✅ Conexión exitosa con el servidor</strong><br>
+            <strong>Empleados en base de datos: ${empleados.length}</strong><br>
+            <strong>Última actualización:</strong> ${new Date().toLocaleString()}
+          `;
+
+          if (empleados.length === 0) {
+            console.log("ℹ️ No hay empleados registrados");
+            tabla.innerHTML = '<tr><td colspan="22" style="text-align: center; padding: 20px; color: #666;">No hay empleados registrados aún</td></tr>';
+          } else {
+            console.log("✅ Empleados encontrados, creando tabla...");
+            tabla.innerHTML = "";
+            
+            empleados.forEach((emp, index) => {
+              console.log(`Procesando empleado ${index + 1}:`, emp.nombre, emp.documento);
+              
+              let fila = `
+                <tr>
+                  <td>${emp.nombre || 'N/A'}</td>
+                  <td>${emp.tipoDocumento || 'N/A'}</td>
+                  <td>${emp.documento || 'N/A'}</td>
+                  <td>${emp.fechaNacimiento || 'N/A'}</td>
+                  <td>${emp.nacionalidad || 'N/A'}</td>
+                  <td>${emp.estadoCivil || 'N/A'}</td>
+                  <td>${emp.direccion || 'N/A'}</td>
+                  <td>${emp.ciudad || 'N/A'}</td>
+                  <td>${emp.telefono || 'N/A'}</td>
+                  <td>${emp.correo || 'N/A'}</td>
+                  <td>${emp.cargo || 'N/A'}</td>
+                  <td>${emp.departamento || 'N/A'}</td>
+                  <td>${emp.tipoContrato || 'N/A'}</td>
+                  <td>${emp.fechaIngreso || 'N/A'}</td>
+                  <td>${emp.jornada || 'N/A'}</td>
+                  <td>${emp.salario ? '$' + Number(emp.salario).toLocaleString() : 'N/A'}</td>
+                  <td>${emp.jefeInmediato || 'N/A'}</td>
+                  <td>${emp.eps || 'N/A'}</td>
+                  <td>${emp.afp || 'N/A'}</td>
+                  <td>${emp.arl || 'N/A'}</td>
+                  <td>${emp.cajaCompensacion || 'N/A'}</td>
+                  <td>
+                    <button class="edit-btn" onclick="editarEmpleado(${emp.id})">Editar</button>
+                    <button class="delete-btn" onclick="eliminarEmpleado(${emp.id})">Eliminar</button>
+                  </td>
+                </tr>`;
+              tabla.innerHTML += fila;
+            });
+            
+            console.log("✅ Tabla creada con", empleados.length, "empleados");
+            mostrarMensaje(`✅ Lista actualizada - ${empleados.length} empleados encontrados`, 'success');
+          }
+        } else {
+          console.error("❌ Error del servidor:", result.message);
+          debugInfo.innerHTML = `
+            <strong>❌ Error del servidor:</strong> ${result.message}<br>
+            <strong>Última actualización:</strong> ${new Date().toLocaleString()}
+          `;
+          mostrarMensaje('❌ Error al cargar empleados: ' + result.message, 'error');
+        }
+      } catch (error) {
+        console.error("❌ Error de conexión:", error);
+        debugInfo.innerHTML = `
+          <strong>❌ Error de conexión:</strong> ${error.message}<br>
+          <strong>💡 Verifica que el servidor esté ejecutándose</strong>
+        `;
+        tabla.innerHTML = '<tr><td colspan="22" style="text-align: center; padding: 20px; color: #dc3545;">Error de conexión con el servidor</td></tr>';
+        mostrarMensaje('❌ Error de conexión con el servidor', 'error');
+      }
+    }
+
+    function configurarModal() {
+      const modal = document.getElementById("editModal");
+      const closeBtn = document.querySelector(".close");
+      const cancelBtn = document.querySelector(".cancel-btn");
+      const form = document.getElementById("editForm");
+
+      // Abrir modal
+      window.editarEmpleado = async function(id) {
+        console.log("📝 Editando empleado ID:", id);
+        
+        try {
+          const response = await fetch(`/api/empleados/${id}`);
+          const result = await response.json();
+
+          if (result.success) {
+            const empleado = result.data;
+            empleadoEditando = empleado.id;
+            
+            console.log("Datos del empleado a editar:", empleado);
+            
+            // Llenar el formulario con los datos del empleado
+            document.getElementById("editNombre").value = empleado.nombre || '';
+            document.getElementById("editTipoDocumento").value = empleado.tipoDocumento || 'Cédula';
+            document.getElementById("editDocumento").value = empleado.documento || '';
+            document.getElementById("editFechaNacimiento").value = empleado.fechaNacimiento || '';
+            document.getElementById("editNacionalidad").value = empleado.nacionalidad || '';
+            document.getElementById("editEstadoCivil").value = empleado.estadoCivil || 'Soltero';
+            document.getElementById("editDireccion").value = empleado.direccion || '';
+            document.getElementById("editCiudad").value = empleado.ciudad || '';
+            document.getElementById("editTelefono").value = empleado.telefono || '';
+            document.getElementById("editCorreo").value = empleado.correo || '';
+            document.getElementById("editCargo").value = empleado.cargo || '';
+            document.getElementById("editDepartamento").value = empleado.departamento || '';
+            document.getElementById("editTipoContrato").value = empleado.tipoContrato || 'Término fijo';
+            document.getElementById("editFechaIngreso").value = empleado.fechaIngreso || '';
+            document.getElementById("editJornada").value = empleado.jornada || 'Completa';
+            document.getElementById("editSalario").value = empleado.salario || '';
+            document.getElementById("editJefeInmediato").value = empleado.jefeInmediato || '';
+            document.getElementById("editEps").value = empleado.eps || '';
+            document.getElementById("editAfp").value = empleado.afp || '';
+            document.getElementById("editArl").value = empleado.arl || '';
+            document.getElementById("editCajaCompensacion").value = empleado.cajaCompensacion || '';
+            
+            modal.style.display = "block";
+          } else {
+            alert('Error al cargar empleado: ' + result.message);
+          }
+        } catch (error) {
+          console.error("❌ Error al cargar empleado:", error);
+          alert('Error de conexión: ' + error.message);
+        }
+      };
+
+      // Cerrar modal
+      function cerrarModal() {
+        modal.style.display = "none";
+        empleadoEditando = null;
+        console.log("❌ Modal cerrado");
+      }
+
+      closeBtn.onclick = cerrarModal;
+      cancelBtn.onclick = cerrarModal;
+
+      // Cerrar modal al hacer clic fuera
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          cerrarModal();
+        }
+      };
+
+      // Manejar envío del formulario
+      form.onsubmit = async function(e) {
+        e.preventDefault();
+        
+        if (empleadoEditando !== null) {
+          console.log("💾 Guardando cambios del empleado:", empleadoEditando);
+          
+          const empleadoData = {
+            nombre: document.getElementById("editNombre").value,
+            tipoDocumento: document.getElementById("editTipoDocumento").value,
+            documento: document.getElementById("editDocumento").value,
+            fechaNacimiento: document.getElementById("editFechaNacimiento").value,
+            nacionalidad: document.getElementById("editNacionalidad").value,
+            estadoCivil: document.getElementById("editEstadoCivil").value,
+            direccion: document.getElementById("editDireccion").value,
+            ciudad: document.getElementById("editCiudad").value,
+            telefono: document.getElementById("editTelefono").value,
+            correo: document.getElementById("editCorreo").value,
+            cargo: document.getElementById("editCargo").value,
+            departamento: document.getElementById("editDepartamento").value,
+            tipoContrato: document.getElementById("editTipoContrato").value,
+            fechaIngreso: document.getElementById("editFechaIngreso").value,
+            jornada: document.getElementById("editJornada").value,
+            salario: document.getElementById("editSalario").value,
+            jefeInmediato: document.getElementById("editJefeInmediato").value,
+            eps: document.getElementById("editEps").value,
+            afp: document.getElementById("editAfp").value,
+            arl: document.getElementById("editArl").value,
+            cajaCompensacion: document.getElementById("editCajaCompensacion").value
+          };
+
+          try {
+            const response = await fetch(`/api/empleados/${empleadoEditando}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(empleadoData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+              console.log("✅ Empleado actualizado en la base de datos");
+              
+              // Recargar la tabla
+              cargarEmpleados();
+              
+              // Cerrar modal
+              cerrarModal();
+              
+              mostrarMensaje("✅ Empleado actualizado correctamente", 'success');
+            } else {
+              console.error("❌ Error al actualizar:", result.message);
+              mostrarMensaje('❌ Error al actualizar: ' + result.message, 'error');
+            }
+          } catch (error) {
+            console.error("❌ Error de conexión:", error);
+            mostrarMensaje('❌ Error de conexión: ' + error.message, 'error');
+          }
+        }
+      };
+    }
+
+    async function eliminarEmpleado(id) {
+      if (confirm('¿Está seguro de que desea eliminar este empleado?')) {
+        try {
+          console.log("🗑️ Eliminando empleado ID:", id);
+          
+          const response = await fetch(`/api/empleados/${id}`, {
+            method: 'DELETE'
+          });
+          
+          const result = await response.json();
+
+          if (result.success) {
+            console.log("✅ Empleado eliminado de la base de datos");
+            mostrarMensaje('✅ Empleado eliminado exitosamente', 'success');
+            cargarEmpleados();
+          } else {
+            console.error("❌ Error al eliminar:", result.message);
+            mostrarMensaje('❌ Error al eliminar: ' + result.message, 'error');
+          }
+        } catch (error) {
+          console.error("❌ Error de conexión:", error);
+          mostrarMensaje('❌ Error de conexión: ' + error.message, 'error');
+        }
+      }
+    }
+
+    // Función para forzar recarga de datos
+    window.recargarDatos = function() {
+      console.log("🔄 Forzando recarga de datos...");
+      cargarEmpleados();
+    };
+
+    console.log("✅ LISTA DE EMPLEADOS CARGADA - Conectado a Node.js + SQLite");
+    console.log("💡 Usa recargarDatos() en la consola para refrescar la tabla");
+  </script>
+
+</body>
+</html>

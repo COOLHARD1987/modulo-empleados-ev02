@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Módulo de Empleados</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('modulo de inventarios.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .overlay {
+      background-color: rgba(255, 255, 255, 0.88);
+      margin: 30px auto;
+      padding: 30px 40px;
+      max-width: 900px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin: 0;
+    }
+
+    h1 {
+      color: #6c2c00;
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    h2 {
+      color: #b37500;
+      margin-bottom: 30px;
+    }
+
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      padding: 20px;
+    }
+
+    legend {
+      font-weight: bold;
+      color: #333;
+      padding: 0 10px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+      gap: 20px;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      flex: 1 1 100%;
+    }
+
+    .form-group label {
+      margin-bottom: 5px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #D6D685;
+      color: #6c2c00;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      float: right;
+      margin-top: 10px;
+      margin-bottom: 28px;
+      transition: all 0.3s ease;
+      margin-left: 10px;
+    }
+
+    button:hover {
+      background: #c4c473;
+      color: #5a2400;
+    }
+
+    .button {
+      background: #B8D685;
+      color: #254D1B;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      float: left;
+      margin-top: 10px;
+    }
+
+    .button:hover {
+      background: #a6c473;
+      color: #1a3a14;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 10px;
+      color: #6c2c00;
+      font-weight: bold;
+    }
+
+    .status-message {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      text-align: center;
+      display: none;
+    }
+
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay">
+    <h1>Pollos y Huevos de Cundinamarca</h1>
+    <h2>Módulo de Empleados</h2>
+
+    <!-- Mensajes de estado -->
+    <div id="statusMessage" class="status-message"></div>
+    <div id="loading" class="loading">🔄 Guardando empleado...</div>
+
+    <form id="empleadoForm">
+      <fieldset>
+        <legend>Datos Personales</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre completo:</label>
+            <input type="text" name="nombre" required>
+          </div>
+          <div class="form-group">
+            <label>Tipo de documento:</label>
+            <select name="tipoDocumento" required>
+              <option value="Cédula">Cédula</option>
+              <option value="Pasaporte">Pasaporte</option>
+              <option value="Cédula Extranjería">Cédula Extranjería</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Número de documento:</label>
+            <input type="text" name="documento" required>
+          </div>
+          <div class="form-group">
+            <label>Fecha de nacimiento:</label>
+            <input type="date" name="fechaNacimiento">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nacionalidad:</label>
+            <input type="text" name="nacionalidad">
+          </div>
+          <div class="form-group">
+            <label>Estado civil:</label>
+            <select name="estadoCivil">
+              <option value="Soltero">Soltero</option>
+              <option value="Casado">Casado</option>
+              <option value="Divorciado">Divorciado</option>
+              <option value="Viudo">Viudo</option>
+              <option value="Unión Libre">Unión Libre</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Contacto</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Dirección:</label>
+            <input type="text" name="direccion">
+          </div>
+          <div class="form-group">
+            <label>Ciudad:</label>
+            <input type="text" name="ciudad">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Teléfono:</label>
+            <input type="tel" name="telefono">
+          </div>
+          <div class="form-group">
+            <label>Correo electrónico:</label>
+            <input type="email" name="correo">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Información Laboral</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cargo:</label>
+            <input type="text" name="cargo">
+          </div>
+          <div class="form-group">
+            <label>Departamento:</label>
+            <input type="text" name="departamento">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo de contrato:</label>
+            <select name="tipoContrato">
+              <option value="Término fijo">Término fijo</option>
+              <option value="Término indefinido">Término indefinido</option>
+              <option value="Prestación de servicios">Prestación de servicios</option>
+              <option value="Obra o labor">Obra o labor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha de ingreso:</label>
+            <input type="date" name="fechaIngreso">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Jornada laboral:</label>
+            <select name="jornada">
+              <option value="Completa">Completa</option>
+              <option value="Parcial">Parcial</option>
+              <option value="Medio tiempo">Medio tiempo</option>
+              <option value="Turnos">Turnos</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Salario:</label>
+            <input type="number" name="salario" step="0.01">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Jefe inmediato:</label>
+            <input type="text" name="jefeInmediato">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Seguridad Social</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label>EPS:</label>
+            <input type="text" name="eps">
+          </div>
+          <div class="form-group">
+            <label>Fondo de pensiones (AFP):</label>
+            <input type="text" name="afp">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ARL:</label>
+            <input type="text" name="arl">
+          </div>
+          <div class="form-group">
+            <label>Caja de compensación:</label>
+            <input type="text" name="cajaCompensacion">
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Botones -->
+      <a href="empleados.html" class="button">Regresar al Menú</a>
+      <button type="submit">Registrar Empleado</button>
+    </form>
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const formulario = document.getElementById("empleadoForm");
+  const loading = document.getElementById("loading");
+  const statusMessage = document.getElementById("statusMessage");
+
+  function mostrarMensaje(mensaje, tipo) {
+    statusMessage.textContent = mensaje;
+    statusMessage.className = 'status-message status-' + tipo;
+    statusMessage.style.display = 'block';
+    
+    setTimeout(() => {
+      statusMessage.style.display = 'none';
+    }, 5000);
+  }
+
+  formulario.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(formulario);
+    
+    const empleado = {
+      // Datos Personales
+      nombre: formData.get('nombre'),
+      tipoDocumento: formData.get('tipoDocumento'),
+      documento: formData.get('documento'),
+      fechaNacimiento: formData.get('fechaNacimiento'),
+      nacionalidad: formData.get('nacionalidad'),
+      estadoCivil: formData.get('estadoCivil'),
+      
+      // Contacto
+      direccion: formData.get('direccion'),
+      ciudad: formData.get('ciudad'),
+      telefono: formData.get('telefono'),
+      correo: formData.get('correo'),
+      
+      // Información Laboral
+      cargo: formData.get('cargo'),
+      departamento: formData.get('departamento'),
+      tipoContrato: formData.get('tipoContrato'),
+      fechaIngreso: formData.get('fechaIngreso'),
+      jornada: formData.get('jornada'),
+      salario: formData.get('salario'),
+      jefeInmediato: formData.get('jefeInmediato'),
+      
+      // Seguridad Social
+      eps: formData.get('eps'),
+      afp: formData.get('afp'),
+      arl: formData.get('arl'),
+      cajaCompensacion: formData.get('cajaCompensacion')
+    };
+
+    console.log("📤 Enviando datos al servidor:", empleado);
+
+    try {
+      // Mostrar loading
+      loading.style.display = 'block';
+      
+      // Enviar datos al servidor Node.js
+      const response = await fetch('/api/empleados', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(empleado)
+      });
+
+      const result = await response.json();
+
+      // Ocultar loading
+      loading.style.display = 'none';
+
+      if (result.success) {
+        console.log("✅ Empleado guardado en base de datos:", result.data);
+        mostrarMensaje('✅ Empleado registrado correctamente en la base de datos', 'success');
+        
+        // Limpiar formulario
+        formulario.reset();
+        
+        // Redirigir después de 2 segundos
+        setTimeout(() => {
+          window.location.href = "lista-empleados.html";
+        }, 2000);
+      } else {
+        console.error("❌ Error del servidor:", result.message);
+        mostrarMensaje('❌ Error: ' + result.message, 'error');
+      }
+    } catch (error) {
+      console.error("❌ Error de conexión:", error);
+      loading.style.display = 'none';
+      mostrarMensaje('❌ Error de conexión con el servidor: ' + error.message, 'error');
+    }
+  });
+});
+</script>
+</body>
+</html>
