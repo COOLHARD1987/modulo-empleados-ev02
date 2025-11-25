@@ -29,7 +29,7 @@ Acceso:
 http://localhost:3000
 
 Repositorio:
-https://github.com/COOLHARD1987/modulo-empleados-ev03.git
+https://github.com/COOLHARD1987/modulo-empleados-ev02.git
 
 Estructura del Proyecto:
 text
